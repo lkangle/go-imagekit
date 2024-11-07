@@ -1,7 +1,7 @@
 package main
 
-import "github.com/lkangle/go-imagekit/lib"
+import "github.com/lkangle/go-imagekit/pngquant"
 
 func main() {
-	lib.Say()
+	pngquant.Say()
 }
