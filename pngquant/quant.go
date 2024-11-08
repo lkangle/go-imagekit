@@ -23,7 +23,7 @@ var (
 	ErrTransfrom = errors.New("type transform has error")
 )
 
-func Compress(file *os.File, floyd float32, maxQuality, minQuality, speed, rzlevel int) (*os.File, error) {
+func Compress(file *os.File, floyd float32, minQuality, maxQuality, speed, rzlevel int) (*os.File, error) {
 	stat, err := file.Stat()
 	if err != nil {
 		return nil, err
@@ -48,22 +48,19 @@ func Compress(file *os.File, floyd float32, maxQuality, minQuality, speed, rzlev
 	widthPtr := (*C.int)(unsafe.Pointer(&width))
 	heightPtr := (*C.int)(unsafe.Pointer(&height))
 
-	cData := C.CBytes(data)
-
-	C.PNGCompress((*C.uchar)(cData), C.size_t(size), outPtr, lengthPtr, widthPtr, heightPtr,
+	C.PNGCompress((*C.uchar)(unsafe.Pointer(&data[0])), C.size_t(size), outPtr, lengthPtr, widthPtr, heightPtr,
 		C.int(minQuality), C.int(maxQuality), C.float(floyd), C.int(speed), C.int(rzlevel))
 
 	outimage := C.GoBytes(unsafe.Pointer(out), C.int(length))
 	dataLen := len(outimage)
 
-	C.free(cData)
 	C.free(unsafe.Pointer(out))
 
 	if dataLen != len(outimage) {
 		return nil, ErrTransfrom
 	}
 
-	img, err := os.Create("./tep.png")
+	img, err := os.Create("./temp.png")
 	if err != nil {
 		return nil, err
 	}
