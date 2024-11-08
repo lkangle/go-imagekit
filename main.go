@@ -15,7 +15,7 @@ func main() {
 	}
 	defer file.Close()
 
-	img, err := pngquant.Compress(file, 0.9, 50, 97, 2, 1)
+	img, err := pngquant.Compress(file, 1, 50, 98, 0, 1)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
